@@ -1,4 +1,4 @@
-const db = require("../config/db.js");
+const { getCollections } = require("../config/db.js");
 
 const getDashboardStats = async (req, res) => {
   const userEmail = req.token_email;
@@ -7,9 +7,13 @@ const getDashboardStats = async (req, res) => {
   const isMyJobsOnly = my_jobs_only === "true";
 
   try {
+
+    const { jobsCollection } = await getCollections();
+
     const matchStage = isMyJobsOnly ? { creator_email: userEmail } : {};
 
-    const stats = await db.jobsCollection
+
+    const stats = await jobsCollection
       .aggregate([
         { $match: matchStage },
 
@@ -176,11 +180,11 @@ const getDashboardStats = async (req, res) => {
       success: true,
       message: "Dashboard statistics retrieved successfully",
       data: {
-        totalJobs: breakdown.total,
+        totalJobs: breakdown.total || 0,
         statusBreakdown: {
-          pending: breakdown.pending.count || 0,
-          accepted: breakdown.accepted.count || 0,
-          completed: breakdown.completed.count || 0,
+          pending: breakdown.pending?.count || 0,
+          accepted: breakdown.accepted?.count || 0,
+          completed: breakdown.completed?.count || 0,
         },
         jobsOverTime: result.jobsOverTime || [],
         topCategories: result.topCategories || [],
@@ -195,7 +199,8 @@ const getDashboardStats = async (req, res) => {
     };
 
     res.status(200).send(response);
-  } catch {
+  } catch (error) {
+    console.error("Dashboard Stats Error:", error.message);
     res.status(500).send({
       success: false,
       message: "Failed to retrieve dashboard statistics",

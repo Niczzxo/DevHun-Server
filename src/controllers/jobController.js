@@ -3,6 +3,7 @@ const { getCollections } = require("../config/db.js");
 
 const getJobs = async (req, res) => {
   try {
+
     const { jobsCollection } = await getCollections();
 
     let query = {};
@@ -27,11 +28,10 @@ const getJobs = async (req, res) => {
     const limitNum = Math.min(100, Math.max(1, Number(limit)));
     const skipNum = (pageNum - 1) * limitNum;
 
-    // Sorting
     const order = sortOrder === "asc" ? 1 : -1;
     sortObj[sortBy] = order;
 
-    // Text Search
+    // Text Search Logic
     if (search?.trim()) {
       const searchRegex = { $regex: search.trim(), $options: "i" };
       query.$or = [
@@ -41,7 +41,7 @@ const getJobs = async (req, res) => {
       ];
     }
 
-    // Filters
+    // Filter Logic
     if (job_category?.trim()) query.job_category = job_category.trim();
     if (job_type?.trim()) query.job_type = job_type.trim();
     if (location?.trim()) {
@@ -49,7 +49,7 @@ const getJobs = async (req, res) => {
     }
     if (experience_level?.trim()) query.experience_level = experience_level.trim();
 
-    // Field Projection
+
     if (fields?.trim()) {
       fields.split(",").forEach((field) => {
         projectField[field.trim()] = 1;
@@ -72,10 +72,8 @@ const getJobs = async (req, res) => {
       };
     }
 
-    // Get total count for pagination
     const total = await jobsCollection.countDocuments(query);
 
-    // Fetch jobs
     const jobs = await jobsCollection
       .find(query)
       .sort(sortObj)
@@ -107,6 +105,7 @@ const getJobs = async (req, res) => {
 
 const getUserJobs = async (req, res) => {
   const userEmail = req.query.email;
+
 
   if (userEmail !== req.token_email) {
     return res.status(403).send({ message: "Forbidden Access" });
