@@ -151,7 +151,7 @@ vercel
 
 | Variable               | Description                                 |
 | ---------------------- | ------------------------------------------- |
-| `PORT`                 | Server port (default: 8000)                 |
+| `PORT`                 | Server port (default: 3000)                 |
 | `MONGODB_URI`          | MongoDB connection string                   |
 | `FIREBASE_SERVICE_KEY` | Base64-encoded Firebase service account key |
 
@@ -164,4 +164,4 @@ vercel
 
 ## Author
 
-Md. Rakibul Islam
+Riyazul Islam
