@@ -1,0 +1,6 @@
+node_modules
+.env
+encode.js
+labora-firebase-adminsdk.json
+.vercel
+.vscode
