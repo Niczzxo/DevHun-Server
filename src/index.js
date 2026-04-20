@@ -1,5 +1,4 @@
 require("dotenv").config();
-
 const express = require("express");
 const cors = require("cors");
 const { client } = require("./config/db.js");
@@ -8,13 +7,20 @@ const taskRouter = require("./routes/taskRouter.js");
 const dashboardRouter = require("./routes/dashboardRouter.js");
 
 const app = express();
-const port = 3000;
+
+const port = process.env.PORT || 3000;
 
 app.use(express.json());
-app.use(cors());
+
+app.use(cors({
+  origin: ["https://dev-hun-client.vercel.app", "http://localhost:5173"],
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"]
+}));
 
 const run = async () => {
   try {
+
     // await client.connect();
 
     app.get("/", (req, res) => {
@@ -32,11 +38,16 @@ const run = async () => {
       });
     });
 
-    app.listen(port, "0.0.0.0", () => {
+
+    app.listen(port, () => {
       console.log("Server running on port: ", port);
     });
-  } finally {
-    // await client.close();
+  } catch (error) {
+    console.error("Server Start Error: ", error);
   }
 };
+
 run().catch(console.dir);
+
+
+module.exports = app;
