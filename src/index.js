@@ -8,7 +8,7 @@ const taskRouter = require("./routes/taskRouter.js");
 const dashboardRouter = require("./routes/dashboardRouter.js");
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 8000;
 
 app.use(express.json());
 app.use(cors());
@@ -18,7 +18,7 @@ const run = async () => {
     // await client.connect();
 
     app.get("/", (req, res) => {
-      res.send({ success: true, message: "DevHun server is running!" });
+      res.send({ success: true, message: "DevHunserver is running!" });
     });
 
     app.use("/jobs", jobRouter);
@@ -32,8 +32,8 @@ const run = async () => {
       });
     });
 
-    app.listen(port, "0.0.0.0", () => {
-      console.log("Server running on port: ", port);
+    app.listen(port, () => {
+      // console.log("Server running in port: ", port);
     });
   } finally {
     // await client.close();

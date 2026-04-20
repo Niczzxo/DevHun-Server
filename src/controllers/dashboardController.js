@@ -1,4 +1,4 @@
-const db = require("../config/db.js");
+const { jobsCollection } = require("../config/db.js");
 
 const getDashboardStats = async (req, res) => {
   const userEmail = req.token_email;
@@ -9,7 +9,7 @@ const getDashboardStats = async (req, res) => {
   try {
     const matchStage = isMyJobsOnly ? { creator_email: userEmail } : {};
 
-    const stats = await db.jobsCollection
+    const stats = await jobsCollection
       .aggregate([
         { $match: matchStage },
 

@@ -39,7 +39,7 @@ comprehensive job management capabilities, and task tracking functionality.
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/programmerrakibul/labora-server
+git clone https://github.com/Niczzxo/DevHun-Server
 cd DevHun-server
 ```
 
