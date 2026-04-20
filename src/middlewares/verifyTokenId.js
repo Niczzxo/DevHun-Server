@@ -1,19 +1,21 @@
 const admin = require("firebase-admin");
 
 const FIREBASE_SERVICE_KEY = process.env.FIREBASE_SERVICE_KEY;
-let isInitialized = false;
 
 const initializeFirebase = () => {
-  if (isInitialized) return true;
-  if (!FIREBASE_SERVICE_KEY?.trim()) return false;
+
+  if (admin.apps.length > 0) return true;
+  if (!FIREBASE_SERVICE_KEY) return false;
 
   try {
     let serviceAccount;
-    // Try parsing as raw JSON first
+
+
+    const sanitizedKey = FIREBASE_SERVICE_KEY.replace(/\\n/g, '\n');
+
     try {
-      serviceAccount = JSON.parse(FIREBASE_SERVICE_KEY);
+      serviceAccount = JSON.parse(sanitizedKey);
     } catch (e) {
-      // If parsing fails, try decoding from base64
       const decoded = Buffer.from(FIREBASE_SERVICE_KEY, "base64").toString("utf8");
       serviceAccount = JSON.parse(decoded);
     }
@@ -21,10 +23,10 @@ const initializeFirebase = () => {
     admin.initializeApp({
       credential: admin.credential.cert(serviceAccount),
     });
-    isInitialized = true;
+    console.log("Firebase Admin initialized successfully.");
     return true;
   } catch (error) {
-    console.error("Firebase initialization failed:", error);
+    console.error("Firebase initialization failed:", error.message);
     return false;
   }
 };
@@ -33,18 +35,26 @@ const verifyTokenId = async (req, res, next) => {
   if (!initializeFirebase()) {
     return res.status(500).send({
       success: false,
-      message: "Firebase configuration is missing. Please set FIREBASE_SERVICE_KEY in the Secrets panel."
+      message: "Firebase configuration error."
     });
   }
 
-  const token = req.token_id;
+
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return res.status(401).send({ message: "Unauthorized: No token provided" });
+  }
+
+  const token = authHeader.split(' ')[1];
 
   try {
     const decoded = await admin.auth().verifyIdToken(token);
     req.token_email = decoded.email;
+    req.user = decoded;
     next();
-  } catch {
-    res.status(401).send({ message: "Unauthorized Access" });
+  } catch (error) {
+    console.error("Token verification error:", error.message);
+    res.status(401).send({ message: "Unauthorized: Invalid token" });
   }
 };
 
