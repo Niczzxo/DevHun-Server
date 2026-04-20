@@ -52,7 +52,7 @@ npm install
 3. Create a `.env` file in the root directory:
 
 ```env
-PORT=8000
+PORT=3000
 MONGODB_URI=your_mongodb_connection_string
 FIREBASE_SERVICE_KEY=your_base64_encoded_firebase_service_key
 ```
@@ -63,7 +63,7 @@ FIREBASE_SERVICE_KEY=your_base64_encoded_firebase_service_key
 npm start
 ```
 
-The server will run on `http://localhost:8000` by default.
+The server will run on `http://localhost:3000` by default.
 
 ## API Endpoints
 
