@@ -14,7 +14,7 @@ const client = new MongoClient(uri, {
   },
 });
 
-const database = client.db("devhun-db");
+const database = client.db("-db");
 const jobsCollection = database.collection("all_jobs");
 const tasksCollection = database.collection("added_tasks");
 
