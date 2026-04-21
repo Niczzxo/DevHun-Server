@@ -1,43 +1,21 @@
 const { MongoClient, ServerApiVersion } = require("mongodb");
 
-let cachedClient = null;
-let cachedDb = null;
+const uri = process.env.MONGODB_URI;
 
-async function connectToDatabase() {
-  const uri = process.env.MONGODB_URI;
-
-  if (!uri) {
-    throw new Error("MONGODB_URI environment variable is missing.");
-  }
-
-  if (cachedClient && cachedDb) {
-    return { client: cachedClient, db: cachedDb };
-  }
-
-  const client = new MongoClient(uri, {
-    serverApi: {
-      version: ServerApiVersion.v1,
-      strict: true,
-      deprecationErrors: true,
-    },
-  });
-
-  await client.connect();
-  const db = client.db("DevHun-db");
-
-  cachedClient = client;
-  cachedDb = db;
-
-  return { client, db };
+if (!uri?.trim()) {
+  throw new Error("MONGODB_URI is not defined in environment variables");
 }
 
-const getCollections = async () => {
-  const { db } = await connectToDatabase();
-  return {
-    jobsCollection: db.collection("all_jobs"),
-    tasksCollection: db.collection("added_tasks"),
-    usersCollection: db.collection("users")
-  };
-};
+const client = new MongoClient(uri, {
+  serverApi: {
+    version: ServerApiVersion.v1,
+    strict: true,
+    deprecationErrors: true,
+  },
+});
 
-module.exports = { connectToDatabase, getCollections };
+const database = client.db("labora-db");
+const jobsCollection = database.collection("all_jobs");
+const tasksCollection = database.collection("added_tasks");
+
+module.exports = { client, jobsCollection, tasksCollection };

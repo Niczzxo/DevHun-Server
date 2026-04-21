@@ -4,4 +4,3 @@ encode.js
 labora-firebase-adminsdk.json
 .vercel
 .vscode
-.env*.local

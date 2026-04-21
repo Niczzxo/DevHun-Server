@@ -1,61 +1,42 @@
-if (process.env.NODE_ENV !== 'production') {
-    require("dotenv").config();
-}
+require("dotenv").config();
 
 const express = require("express");
 const cors = require("cors");
-
-
+const { client } = require("./config/db.js");
 const jobRouter = require("./routes/jobRouter.js");
 const taskRouter = require("./routes/taskRouter.js");
 const dashboardRouter = require("./routes/dashboardRouter.js");
 
 const app = express();
-const port = process.env.PORT || 3000;
-
+const port = process.env.PORT || 8000;
 
 app.use(express.json());
-app.use(cors({
-  origin: [
-    "https://devhun-client.vercel.app",
-    "https://dev-hun-client.vercel.app",
-    "http://localhost:5173"
-  ],
-  credentials: true,
-  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"]
-}));
+app.use(cors());
 
+const run = async () => {
+  try {
+    // await client.connect();
 
-app.get("/", (req, res) => {
-  res.send({ success: true, message: "DevHun server is running successfully!" });
-});
+    app.get("/", (req, res) => {
+      res.send({ success: true, message: "Labora server is running!" });
+    });
 
+    app.use("/jobs", jobRouter);
+    app.use("/added-tasks", taskRouter);
+    app.use("/dashboard", dashboardRouter);
 
-app.use("/jobs", jobRouter);
-app.use("/added-tasks", taskRouter);
-app.use("/dashboard", dashboardRouter);
+    app.use((req, res) => {
+      res.status(404).send({
+        success: false,
+        message: "Route not found",
+      });
+    });
 
-
-app.use((req, res) => {
-  res.status(404).send({
-    success: false,
-    message: "Requested route not found",
-  });
-});
-
-
-app.use((err, req, res, next) => {
-  console.error("Global Error Log:", err.stack);
-  res.status(500).send({ success: false, message: "Internal Server Error" });
-});
-
-
-// Only start the server locally if not on Vercel
-if (!process.env.VERCEL) {
-  app.listen(port, () => {
-    console.log(`Server is running locally on port: ${port}`);
-  });
-}
-
-
-module.exports = app;
+    app.listen(port, () => {
+      // console.log("Server running in port: ", port);
+    });
+  } finally {
+    // await client.close();
+  }
+};
+run().catch(console.dir);

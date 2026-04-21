@@ -1,76 +1,97 @@
 const { ObjectId } = require("mongodb");
-const { getCollections } = require("../config/db.js");
+const { tasksCollection } = require("../config/db.js");
 
-const getUserTasks = async (req, res) => {
-  const userEmail = req.query.email;
-
-  if (userEmail !== req.token_email) {
-    return res.status(403).send({ message: "Forbidden Access" });
-  }
+const postTask = async (req, res) => {
+  const newTask = req.body;
 
   try {
-    const { tasksCollection } = await getCollections();
-    const result = await tasksCollection.find({ creator_email: userEmail }).toArray();
+    const result = await tasksCollection.insertOne(newTask);
 
     res.send({
       success: true,
-      message: "User tasks data successfully retrieved",
-      user_tasks: result,
+      message: "Task posted successfully",
+      ...result,
     });
-  } catch (error) {
-    console.error("getUserTasks error:", error);
+  } catch {
     res.status(500).send({
       success: false,
-      message: "User tasks data retrieved failed",
+      message: "Task post failed",
     });
   }
 };
 
-const postTask = async (req, res) => {
-  const newTask = req.body;
-  newTask.created_at = new Date().toISOString();
-  newTask.status = "pending";
+const getUserTasks = async (req, res) => {
+  const { email } = req.query;
+  const pipeline = [
+    {
+      $match: {
+        accepted_user_email: email,
+      },
+    },
+    {
+      $addFields: {
+        jobObjId: {
+          $convert: {
+            input: "$job_id",
+            to: "objectId",
+          },
+        },
+      },
+    },
+    {
+      $lookup: {
+        from: "all_jobs",
+        localField: "jobObjId",
+        foreignField: "_id",
+        as: "job_details",
+      },
+    },
+    {
+      $unwind: "$job_details",
+    },
+  ];
 
   try {
-    const { tasksCollection } = await getCollections();
-    const result = await tasksCollection.insertOne(newTask);
+    const result = await tasksCollection
+      .aggregate(pipeline)
+      .project({
+        accepted_user_name: 1,
+        job_details: 1,
+        accepted_user_email: 1,
+      })
+      .toArray();
 
     res.send({
-      ...result,
       success: true,
-      message: "Task data posted successfully",
+      message: "Task jobs data retrieved successfully",
+      user_tasks: result,
     });
-  } catch (error) {
-    console.error("postTask error:", error);
+  } catch {
     res.status(500).send({
       success: false,
-      message: "Task data post failed",
+      message: "Task jobs data retrieved failed",
     });
   }
 };
 
 const deleteTaskById = async (req, res) => {
   const { id } = req.params;
+  const query = { _id: new ObjectId(id) };
+
   try {
-    const { tasksCollection } = await getCollections();
-    const result = await tasksCollection.deleteOne({ _id: new ObjectId(id) });
+    const result = await tasksCollection.deleteOne(query);
 
     res.send({
       success: true,
-      message: "Task data deleted successfully",
+      message: "Task deleted successfully",
       ...result,
     });
-  } catch (error) {
-    console.error("deleteTaskById error:", error);
+  } catch {
     res.status(500).send({
       success: false,
-      message: "Task data delete failed",
+      message: "Task delete failed",
     });
   }
 };
 
-module.exports = {
-  getUserTasks,
-  postTask,
-  deleteTaskById,
-};
+module.exports = { postTask, getUserTasks, deleteTaskById };

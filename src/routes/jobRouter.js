@@ -12,22 +12,16 @@ const {
 
 const jobRouter = express.Router();
 
-
 jobRouter.get("/", getJobs);
-
-
-jobRouter.get("/id/:id", getJobById);
-
-
 
 jobRouter.get("/user", validateTokenId, verifyTokenId, getUserJobs);
 
-
 jobRouter.post("/", validateTokenId, verifyTokenId, postJob);
 
+jobRouter.get("/:id", getJobById);
 
-jobRouter.route("/:id")
-  .put(validateTokenId, verifyTokenId, updateJobById)
-  .delete(validateTokenId, verifyTokenId, deleteJobById);
+jobRouter.put("/:id", validateTokenId, verifyTokenId, updateJobById);
+
+jobRouter.delete("/:id", validateTokenId, verifyTokenId, deleteJobById);
 
 module.exports = jobRouter;

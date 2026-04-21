@@ -1,25 +1,19 @@
 const validateTokenId = async (req, res, next) => {
   const authorization = req.headers?.authorization;
 
-  if (!authorization || !authorization.startsWith('Bearer ')) {
-    return res.status(401).send({
-      success: false,
-      message: "Unauthorized Access: No token provided"
-    });
+  if (!authorization) {
+    res.status(401).send({ message: "Unauthorized Access" });
+    return;
   }
 
   const token = authorization.split(" ")[1];
 
   if (!token) {
-    return res.status(401).send({
-      success: false,
-      message: "Unauthorized Access: Token is malformed"
-    });
+    res.status(401).send({ message: "Unauthorized Access" });
+    return;
   }
 
   req.token_id = token;
-
-
   next();
 };
 

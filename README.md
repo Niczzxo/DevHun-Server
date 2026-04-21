@@ -1,11 +1,11 @@
-# DevHun Server
+# Labora Server
 
 A RESTful API backend for a job management platform built with Node.js, Express,
 MongoDB, and Firebase Authentication.
 
 ## Overview
 
-DevHun Server provides a robust backend infrastructure for managing job postings
+Labora Server provides a robust backend infrastructure for managing job postings
 and task assignments. It features secure authentication using Firebase,
 comprehensive job management capabilities, and task tracking functionality.
 
@@ -39,8 +39,8 @@ comprehensive job management capabilities, and task tracking functionality.
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/Niczzxo/DevHun-Server
-cd DevHun-server
+git clone https://github.com/programmerrakibul/labora-server
+cd labora-server
 ```
 
 2. Install dependencies:
@@ -52,7 +52,7 @@ npm install
 3. Create a `.env` file in the root directory:
 
 ```env
-PORT=3000
+PORT=8000
 MONGODB_URI=your_mongodb_connection_string
 FIREBASE_SERVICE_KEY=your_base64_encoded_firebase_service_key
 ```
@@ -63,7 +63,7 @@ FIREBASE_SERVICE_KEY=your_base64_encoded_firebase_service_key
 npm start
 ```
 
-The server will run on `http://localhost:3000` by default.
+The server will run on `http://localhost:8000` by default.
 
 ## API Endpoints
 
@@ -108,7 +108,7 @@ email for authorization checks.
 ## Project Structure
 
 ```
-DevHun-server/
+labora-server/
 ├── controllers/
 │   ├── jobController.js      # Job-related business logic
 │   └── taskController.js     # Task-related business logic
@@ -151,7 +151,7 @@ vercel
 
 | Variable               | Description                                 |
 | ---------------------- | ------------------------------------------- |
-| `PORT`                 | Server port (default: 3000)                 |
+| `PORT`                 | Server port (default: 8000)                 |
 | `MONGODB_URI`          | MongoDB connection string                   |
 | `FIREBASE_SERVICE_KEY` | Base64-encoded Firebase service account key |
 
@@ -164,4 +164,4 @@ vercel
 
 ## Author
 
-Riyazul Islam
+Md. Rakibul Islam

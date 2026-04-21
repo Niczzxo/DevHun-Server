@@ -1,6 +1,0 @@
-{
-  "name": "DevHun Server",
-  "description": "Backend API for a job management platform using Node.js, Express, MongoDB, and Firebase.",
-  "requestFramePermissions": [],
-  "majorCapabilities": []
-}

@@ -9,17 +9,11 @@ const {
 
 const taskRouter = express.Router();
 
-/**
- * @route   /added-tasks
- * @access  Private (Valid & Verified Token Required for all routes)
- */
-
 taskRouter.use(validateTokenId, verifyTokenId);
 
 taskRouter.post("/", postTask);
 
 taskRouter.get("/user", getUserTasks);
-
 
 taskRouter.delete("/:id", deleteTaskById);
 
