@@ -8,8 +8,21 @@ if (!FIREBASE_SERVICE_KEY?.trim()) {
   );
 }
 
-const decoded = Buffer.from(FIREBASE_SERVICE_KEY, "base64").toString("utf8");
-const serviceAccount = JSON.parse(decoded);
+let serviceAccount;
+
+try {
+  // First, try parsing it directly in case it's a raw JSON string
+  serviceAccount = JSON.parse(FIREBASE_SERVICE_KEY);
+} catch (error) {
+  // If parsing directly fails, try decoding it as base64
+  try {
+    const decoded = Buffer.from(FIREBASE_SERVICE_KEY, "base64").toString("utf8");
+    serviceAccount = JSON.parse(decoded);
+  } catch (decodeError) {
+    console.error("Failed to parse FIREBASE_SERVICE_KEY. Ensure it is a valid JSON string or a base64 encoded JSON string.");
+    throw new Error("Invalid FIREBASE_SERVICE_KEY format");
+  }
+}
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
