@@ -1,5 +1,9 @@
-if (process.env.NODE_ENV !== "production") {
-  require("dotenv").config();
+if (process.env.NODE_ENV !== "production" && !process.env.VERCEL) {
+  try {
+    require("dotenv").config();
+  } catch (err) {
+    console.error("dotenv error", err);
+  }
 }
 
 const express = require("express");
@@ -21,6 +25,12 @@ app.use(cors({
   ],
   credentials: true
 }));
+
+// Add a global error handler for Express
+app.use((err, req, res, next) => {
+  console.error("Express App Error:", err);
+  res.status(500).send({ success: false, message: "Internal server error", error: err.message });
+});
 
 // Routes
 app.get("/", (req, res) => {
