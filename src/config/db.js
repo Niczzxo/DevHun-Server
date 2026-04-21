@@ -1,15 +1,15 @@
 const { MongoClient, ServerApiVersion } = require("mongodb");
 
-const uri = process.env.MONGODB_URI;
-
-if (!uri) {
-  throw new Error("MONGODB_URI is missing from .env");
-}
-
 let cachedClient = null;
 let cachedDb = null;
 
 async function connectToDatabase() {
+  const uri = process.env.MONGODB_URI;
+
+  if (!uri) {
+    throw new Error("MONGODB_URI environment variable is missing.");
+  }
+
   if (cachedClient && cachedDb) {
     return { client: cachedClient, db: cachedDb };
   }
