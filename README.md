@@ -1,11 +1,11 @@
-# Labora Server
+# DevHun Server
 
 A RESTful API backend for a job management platform built with Node.js, Express,
 MongoDB, and Firebase Authentication.
 
 ## Overview
 
-Labora Server provides a robust backend infrastructure for managing job postings
+DevHun Server provides a robust backend infrastructure for managing job postings
 and task assignments. It features secure authentication using Firebase,
 comprehensive job management capabilities, and task tracking functionality.
 
@@ -39,8 +39,8 @@ comprehensive job management capabilities, and task tracking functionality.
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/programmerrakibul/labora-server
-cd labora-server
+git clone https://github.com/Niczzxo/DevHun-Server.git
+cd DevHun-server
 ```
 
 2. Install dependencies:
@@ -108,7 +108,7 @@ email for authorization checks.
 ## Project Structure
 
 ```
-labora-server/
+DevHun-server/
 ├── controllers/
 │   ├── jobController.js      # Job-related business logic
 │   └── taskController.js     # Task-related business logic

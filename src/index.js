@@ -22,7 +22,7 @@ app.use(cors({
 
 // Routes
 app.get("/", (req, res) => {
-  res.send({ success: true, message: "Labora server is running!" });
+  res.send({ success: true, message: "DevHun server is running!" });
 });
 
 app.use("/jobs", jobRouter);
