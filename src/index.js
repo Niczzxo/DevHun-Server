@@ -1,4 +1,7 @@
-require("dotenv").config();
+if (process.env.NODE_ENV !== 'production') {
+    require("dotenv").config();
+}
+
 const express = require("express");
 const cors = require("cors");
 
@@ -15,6 +18,7 @@ app.use(express.json());
 app.use(cors({
   origin: [
     "https://devhun-client.vercel.app",
+    "https://dev-hun-client.vercel.app",
     "http://localhost:5173"
   ],
   credentials: true,
@@ -41,9 +45,10 @@ app.use((req, res) => {
 
 
 app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).send({ success: false, message: "Something broke on the server!" });
+  console.error("Global Error Log:", err.stack);
+  res.status(500).send({ success: false, message: "Internal Server Error" });
 });
+
 
 if (process.env.NODE_ENV !== 'production') {
   app.listen(port, () => {
@@ -51,4 +56,5 @@ if (process.env.NODE_ENV !== 'production') {
   });
 }
 
+// Vercel-এর জন্য এক্সপোর্ট
 module.exports = app;
