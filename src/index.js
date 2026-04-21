@@ -50,11 +50,12 @@ app.use((err, req, res, next) => {
 });
 
 
-if (process.env.NODE_ENV !== 'production') {
+// Only start the server locally if not on Vercel
+if (!process.env.VERCEL) {
   app.listen(port, () => {
     console.log(`Server is running locally on port: ${port}`);
   });
 }
 
-// Vercel-এর জন্য এক্সপোর্ট
+
 module.exports = app;
