@@ -8,25 +8,38 @@ if (!FIREBASE_SERVICE_KEY?.trim()) {
   console.warn("WARNING: FIREBASE_SERVICE_KEY is missing. Firebase Auth will fail.");
 } else {
   let serviceAccount;
+  const keyToParse = FIREBASE_SERVICE_KEY.trim();
 
   try {
-    // First, try parsing it directly in case it's a raw JSON string
-    serviceAccount = JSON.parse(FIREBASE_SERVICE_KEY);
+    // Attempt 1: Direct JSON parsing
+    serviceAccount = JSON.parse(keyToParse);
   } catch (error) {
-    // If parsing directly fails, try decoding it as base64
     try {
-      const decoded = Buffer.from(FIREBASE_SERVICE_KEY, "base64").toString("utf8");
+      // Attempt 2: Base64 decoding
+      const decoded = Buffer.from(keyToParse, "base64").toString("utf8");
       serviceAccount = JSON.parse(decoded);
     } catch (decodeError) {
-      console.error("Failed to parse FIREBASE_SERVICE_KEY. Invalid JSON/Base64.");
+      try {
+        // Attempt 3: In case there are surrounding quotes that Vercel added
+        const removeQuotes = keyToParse.replace(/^['"]|['"]$/g, "");
+        serviceAccount = JSON.parse(removeQuotes);
+      } catch (quoteError) {
+        // Log safe prefix to debug what value was actually loaded
+        const prefix = keyToParse.substring(0, 15);
+        console.error(`Failed to parse FIREBASE_SERVICE_KEY. Invalid JSON/Base64. Starts with: ${prefix}...`);
+      }
     }
   }
 
   if (serviceAccount && !admin.apps.length) {
-    admin.initializeApp({
-      credential: admin.credential.cert(serviceAccount),
-    });
-    isFirebaseInitialized = true;
+    try {
+      admin.initializeApp({
+        credential: admin.credential.cert(serviceAccount),
+      });
+      isFirebaseInitialized = true;
+    } catch (initErr) {
+      console.error("Firebase Initialization Error:", initErr.message);
+    }
   }
 }
 
