@@ -16,7 +16,7 @@ const jobRouter = express.Router();
 jobRouter.get("/", getJobs);
 
 
-jobRouter.get("/id/:id", getJobById); /
+jobRouter.get("/id/:id", getJobById);
 
 
 
