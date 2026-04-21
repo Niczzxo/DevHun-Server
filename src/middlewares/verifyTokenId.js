@@ -31,14 +31,23 @@ if (!FIREBASE_SERVICE_KEY?.trim()) {
     }
   }
 
-  if (serviceAccount && !admin.apps.length) {
-    try {
-      admin.initializeApp({
-        credential: admin.credential.cert(serviceAccount),
-      });
+  // 👇 EIKHANE NOTUN CODE TI BOSHANO HOYECHE 👇
+  if (serviceAccount) {
+    // Check if app already initialized
+    if (!admin.apps.length) {
+      try {
+        admin.initializeApp({
+          credential: admin.credential.cert(serviceAccount),
+        });
+        isFirebaseInitialized = true;
+        console.log("Firebase initialized successfully.");
+      } catch (initErr) {
+        console.error("Firebase Initialization Error:", initErr.message);
+      }
+    } else {
+      // Very Important: App already ache, fail korbena
       isFirebaseInitialized = true;
-    } catch (initErr) {
-      console.error("Firebase Initialization Error:", initErr.message);
+      console.log("Firebase already initialized, skipping.");
     }
   }
 }
@@ -54,7 +63,8 @@ const verifyTokenId = async (req, res, next) => {
     const decoded = await admin.auth().verifyIdToken(token);
     req.token_email = decoded.email;
     next();
-  } catch {
+  } catch (err) {
+    console.error("Token verification failed:", err.message);
     res.status(401).send({ message: "Unauthorized Access" });
   }
 };
