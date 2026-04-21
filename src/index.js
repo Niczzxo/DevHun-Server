@@ -11,32 +11,37 @@ const app = express();
 const port = process.env.PORT || 8000;
 
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+  origin: [
+    "http://localhost:5173",
+    "http://localhost:3000",
+    "https://devhun-client.vercel.app"
+  ],
+  credentials: true
+}));
 
-const run = async () => {
-  try {
-    // await client.connect();
+// Routes
+app.get("/", (req, res) => {
+  res.send({ success: true, message: "Labora server is running!" });
+});
 
-    app.get("/", (req, res) => {
-      res.send({ success: true, message: "Labora server is running!" });
-    });
+app.use("/jobs", jobRouter);
+app.use("/added-tasks", taskRouter);
+app.use("/dashboard", dashboardRouter);
 
-    app.use("/jobs", jobRouter);
-    app.use("/added-tasks", taskRouter);
-    app.use("/dashboard", dashboardRouter);
+app.use((req, res) => {
+  res.status(404).send({
+    success: false,
+    message: "Route not found",
+  });
+});
 
-    app.use((req, res) => {
-      res.status(404).send({
-        success: false,
-        message: "Route not found",
-      });
-    });
+// Conditionally listen if not in Vercel environment
+if (process.env.NODE_ENV !== "production" && !process.env.VERCEL) {
+  app.listen(port, () => {
+    console.log(`Server running on port: ${port}`);
+  });
+}
 
-    app.listen(port, () => {
-      // console.log("Server running in port: ", port);
-    });
-  } finally {
-    // await client.close();
-  }
-};
-run().catch(console.dir);
+// Export the app for Vercel Serverless Functions
+module.exports = app;
