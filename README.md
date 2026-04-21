@@ -164,4 +164,4 @@ vercel
 
 ## Author
 
-Md. Rakibul Islam
+Md. Riyazul Islam
